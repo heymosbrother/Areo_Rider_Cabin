@@ -47,7 +47,7 @@ void setup()
 void loop()
 {
     // Set target speed
-    float targetSpeed[] = {80,30};
+    float targetSpeed[] = {100,100};
 
     PIDvelocityControl(targetSpeed);
 }
