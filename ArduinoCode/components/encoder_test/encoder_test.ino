@@ -9,7 +9,7 @@ const int ENC1B = 13; // green line
 
 // motor2 encoder
 const int ENC2A = 3; // yellow line
-const int ENC2B = 11; // green line
+const int ENC2B = 12; // green line
 
 // records the position of the encoder
 int enc1pos = 0;
