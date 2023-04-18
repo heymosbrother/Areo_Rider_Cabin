@@ -74,6 +74,8 @@ int16_t angular_e_prev = 0;
 
 #pragma endregion
 
+
+
 void setup()
 {
     Serial.begin(115200);
@@ -100,6 +102,9 @@ void setup()
     // attach interrupt for encoder
     attachInterrupt(digitalPinToInterrupt(motor0Pins[0]), readEncoder0, RISING);
     attachInterrupt(digitalPinToInterrupt(motor1Pins[0]), readEncoder1, RISING);
+
+    // Set a preperation time
+    delay(5000);
 }
 
 void loop()

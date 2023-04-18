@@ -20,7 +20,7 @@
 
 - PIDvelocity2motors
 
-    `Bug detected, not fixed`
+    `Finished`
 
     Use PID to control the motors' rpm, motor 2 needs another set of PID parameter (problem found so far)
 
@@ -40,6 +40,15 @@
 
 - ver_1_0_0
 
-    `Not started`
+    `Finished, need futher settings`
 
     Fix 2 motor velocity control bug and merge it with MPU6050 code to implement straight line driving
+
+    **4/19**: Add 5 second buffer after switch on; motor velocity control fixed; straight finished but need to PID parameters in person
+
+- ver_1_1_0
+
+    `Not started`
+
+    Need to add foil-lift motor control, posture detection funcitonalities
+
