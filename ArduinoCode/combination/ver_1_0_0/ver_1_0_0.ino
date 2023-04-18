@@ -15,12 +15,24 @@
 
 #pragma region [IMU variables]
 
+// use an enum to represent the axes
+enum Axis
+{
+    X_linear,
+    Y_linear,
+    Z_linear,
+    X_angular,
+    Y_angular,
+    Z_angular
+}typedef Axis;
+
 // MPU6050
 MPU6050 accelgyro;
 
 // variables for low pass filter
-int16_t prev_accele_orginal[] = {0,0,0,0,0,0};
+int16_t prev_accele_orginal[] = {0,0,0,0,0,0}; // ax, ay, az, gx, gy, gz
 int16_t prev_accele_filtered[] = {0,0,0,0,0,0};
+int16_t curr_accele_filtered[]={0,0,0,0,0,0}; 
 
 #pragma endregion
 
@@ -50,6 +62,15 @@ float v2Prev[] = {0, 0};
 
 // PID control
 float eintegral[] = {0, 0};
+
+#pragma endregion
+
+#pragma region [Drive straight variables]
+
+// Integral
+int16_t angular_e_integral = 0;
+// derivative 
+int16_t angular_e_prev = 0;
 
 #pragma endregion
 
@@ -85,17 +106,46 @@ void loop()
 {
     // Set target speed
     float targetSpeed[] = {80,30}; // left motor, right motor (in rpm)
-    PIDvelocityControl(targetSpeed);
+    // PIDvelocityControl(targetSpeed);
 
     // IMU part
+    updateAccel();
 
+    // PID drive straight part
+    driveStraight(80);
 }
 
 #pragma region [PID drive straight functions]
 
+// Use PID control to drive straight, use target rotational acceleration of the z axis of the IMU to 0
 void driveStraight(int straightSpeed)
 {
+    int offset = 160;
+    // Get the current rotational acceleration of the z axis of the IMU
+    int16_t alpha_z = (curr_accele_filtered[Z_angular] - offset);
     
+    // PID parameters, need to be futher tested
+    float Kp = 0.1;
+    float Ki = 0.1;
+    float Kd = 0.1;
+
+    // PID control
+    int e = 0 - alpha_z;
+
+    // Integral
+    angular_e_integral += e;
+
+    // Derivative
+    int de = e - angular_e_prev;
+    angular_e_prev = e;
+
+    // Driving signal
+    int drivingSignal = Kp * e + Ki * angular_e_integral + Kd * de;
+
+    // Set the speed of the left and right motor, notice that direction need to be considered
+    float targetSpeed[] = {straightSpeed + drivingSignal, straightSpeed - drivingSignal}; // left motor, right motor (in rpm)
+    PIDvelocityControl(targetSpeed);
+
 }
 
 #pragma endregion
@@ -296,3 +346,27 @@ void readEncoder1()
 #pragma endregion
 
 
+#pragma region [Accelerometer]
+
+// low pass filter the accelerometer data
+void updateAccel()
+{
+    int16_t accele_original[]={0,0,0,0,0,0}; // ax, ay, az, gx, gy, gz
+    accelgyro.getMotion6(&accele_original[0], &accele_original[1], &accele_original[2], &accele_original[3], &accele_original[4], &accele_original[5]);
+
+    // low pass filter the accelerometer data
+    for (int  i = 0; i < 6; i++)
+    {
+        curr_accele_filtered[i] = 0.969 * prev_accele_filtered[i] + 0.0155 * accele_original[i] + 0.0155 * prev_accele_original[i];
+
+        // update previous values
+        prev_accele_original[i] = curr_accele_original[i];
+        prev_accele_filtered[i] = curr_accele_filtered[i];
+    }
+
+    // print values
+
+}
+
+
+#pragma endregion
