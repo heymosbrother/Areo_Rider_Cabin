@@ -5,13 +5,9 @@
     Use PID control the target rotational acceleration of the z axis of the IMU to 0
  */
 
-#pragma region [include libraries]
-
 #include <Wire.h>  // I2C library
 #include <MPU6050.h>    // MPU6050 library
 #include <util/atomic.h>    // for atomic operation (PID)
-
-#pragma endregion
 
 #pragma region [IMU variables]
 
@@ -30,7 +26,7 @@ enum Axis
 MPU6050 accelgyro;
 
 // variables for low pass filter
-int16_t prev_accele_orginal[] = {0,0,0,0,0,0}; // ax, ay, az, gx, gy, gz
+int16_t prev_accele_original[] = {0,0,0,0,0,0}; // ax, ay, az, gx, gy, gz
 int16_t prev_accele_filtered[] = {0,0,0,0,0,0};
 int16_t curr_accele_filtered[]={0,0,0,0,0,0}; 
 
@@ -104,17 +100,19 @@ void setup()
     attachInterrupt(digitalPinToInterrupt(motor1Pins[0]), readEncoder1, RISING);
 
     // Set a preperation time
-    delay(5000);
+    delay(3000);
 }
 
 void loop()
 {
     // Set target speed
-    float targetSpeed[] = {80,30}; // left motor, right motor (in rpm)
+    // float targetSpeed[] = {80,30}; // left motor, right motor (in rpm)
     // PIDvelocityControl(targetSpeed);
 
     // IMU part
     updateAccel();
+    // show data
+    // showIMUdata();
 
     // PID drive straight part
     driveStraight(80);
@@ -125,14 +123,14 @@ void loop()
 // Use PID control to drive straight, use target rotational acceleration of the z axis of the IMU to 0
 void driveStraight(int straightSpeed)
 {
-    int offset = 160;
+    int offset = 128;
     // Get the current rotational acceleration of the z axis of the IMU
     int16_t alpha_z = (curr_accele_filtered[Z_angular] - offset);
     
     // PID parameters, need to be futher tested
-    float Kp = 0.1;
-    float Ki = 0.1;
-    float Kd = 0.1;
+    float Kp = 0.01;
+    float Ki = 0;
+    float Kd = 0;
 
     // PID control
     int e = 0 - alpha_z;
@@ -148,7 +146,7 @@ void driveStraight(int straightSpeed)
     int drivingSignal = Kp * e + Ki * angular_e_integral + Kd * de;
 
     // Set the speed of the left and right motor, notice that direction need to be considered
-    float targetSpeed[] = {straightSpeed + drivingSignal, straightSpeed - drivingSignal}; // left motor, right motor (in rpm)
+    float targetSpeed[] = {straightSpeed - drivingSignal, straightSpeed + drivingSignal}; // left motor, right motor (in rpm)
     PIDvelocityControl(targetSpeed);
 
 }
@@ -200,7 +198,7 @@ void PIDvelocityControl(float targetSpeed[])
 
     // Compute the control signal "u"
     float Kp[] = {5, 5};
-    float Ki[] = {5, 5};
+    float Ki[] = {0.2, 0.2};
     float e[] = {targetSpeed[0] - v1Filt[0], targetSpeed[1] - v1Filt[1]};
     eintegral[0] += e[0] * deltaT[0];
     eintegral[1] += e[1] * deltaT[1];
@@ -250,9 +248,9 @@ void PIDvelocityControl(float targetSpeed[])
     setMotor0(dir[0], pwr[0]);
     setMotor1(dir[1], pwr[1]);
 
-    /*
+    
     // print motor velocity
-    Serial.print("Motor Speed:[ left: "); Serial.print(v2Filt[0]); Serial.print("\t right: "); Serial.print(v2Filt[1]); Serial.println("\t]");
+    Serial.print("Motor Speed:[ left: "); Serial.print(v2Filt[0]); Serial.print("\t right: "); Serial.print(v2Filt[1]); Serial.print("\t]");
     Serial.print("Target Speed:[ left: "); Serial.print(targetSpeed[0]); Serial.print("\t right: "); Serial.print(targetSpeed[1]); Serial.println("\t]");
     // Seperation line
     for(int i = 0; i<30;i++)
@@ -261,7 +259,7 @@ void PIDvelocityControl(float targetSpeed[])
     }
     Serial.println();
     Serial.println();
-    */
+    
 }
 
 // set Motor speed funtions
@@ -362,10 +360,10 @@ void updateAccel()
     // low pass filter the accelerometer data
     for (int  i = 0; i < 6; i++)
     {
-        curr_accele_filtered[i] = 0.969 * prev_accele_filtered[i] + 0.0155 * accele_original[i] + 0.0155 * prev_accele_original[i];
+        curr_accele_filtered[i] = 0.969 * prev_accele_filtered[i] + 0.0155 * prev_accele_original[i] + 0.0155 * prev_accele_original[i];
 
         // update previous values
-        prev_accele_original[i] = curr_accele_original[i];
+        prev_accele_original[i] = accele_original[i];
         prev_accele_filtered[i] = curr_accele_filtered[i];
     }
 
@@ -373,5 +371,27 @@ void updateAccel()
 
 }
 
+
+#pragma endregion
+
+#pragma region [Data output]
+
+void showIMUdata()
+{
+    Serial.print("ax = "); Serial.print(curr_accele_filtered[0]); Serial.print("\t");
+    Serial.print("ay = "); Serial.print(curr_accele_filtered[1]); Serial.print("\t");
+    Serial.print("az = "); Serial.print(curr_accele_filtered[2]); Serial.print("\t");
+    Serial.print("gx = "); Serial.print(curr_accele_filtered[3]); Serial.print("\t");
+    Serial.print("gy = "); Serial.print(curr_accele_filtered[4]); Serial.print("\t");
+    Serial.print("gz = "); Serial.print(curr_accele_filtered[5]); Serial.print("\t");
+    Serial.println();
+}
+
+void showEncoderData()
+{
+    Serial.print("Encoder0 ="); Serial.print(pos_i[0]); Serial.print("\t");
+    Serial.print("Encoder1 ="); Serial.print(pos_i[1]); Serial.print("\t");
+    Serial.println();
+}
 
 #pragma endregion
