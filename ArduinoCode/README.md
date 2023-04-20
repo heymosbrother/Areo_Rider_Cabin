@@ -15,6 +15,12 @@
 
     Read encoder ticks and detect the rotation direction
 
+- foil_lift
+
+    `Finished`
+
+    Control the lift mechanism trigger to rotate after a designated time
+
 - L298N_test
 
     `Finished`
@@ -55,9 +61,14 @@
     
     **4/20**: PID Drive straight: Kp = 1, Ki = Kd = 0; 
 
+    Since the wheels are too slipery, the functionality is not ideal
+    
+    May need another 9-axis IMU to complete the task
+
 - ver_1_1_0
 
-    `Not started`
+    `In progress`
 
     Need to add foil-lift motor control, posture detection funcitonalities
 
+    **4/20**: foil-lift finished, posture detection not started

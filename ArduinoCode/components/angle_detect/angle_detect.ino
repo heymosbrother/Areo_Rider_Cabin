@@ -33,22 +33,15 @@ void loop() {
     prev_accele_filtered[i] = accele_filtered[i];
   }
 
-  // print values
+  // Detect row and pitch angle with accelerometer data
+  float row, pitch;
 
-  // print gz values
-  // Serial.print("original ax = "); Serial.print(accele_original[0]);
-  // Serial.print("\t");
-  Serial.print("filtered ax = "); Serial.print(accele_filtered[0]);
-  // Serial.println();
-  // print ax values
-  // Serial.print("original az = "); Serial.print(accele_original[2]);
-  Serial.print("\t");
-  Serial.print("filtered az = "); Serial.print(accele_filtered[2]);
-  Serial.print("\t");
-  // print ay values
-  Serial.print("filtered ay = ");  Serial.print(accele_filtered[1]);
+  //    need futther calibration
+  row = atan2(accele_filtered[0], sqrt(accele_filtered[1] * accele_filtered[1] + accele_filtered[2] * accele_filtered[2])) * 180 / PI;
+  pitch = atan2(accele_filtered[1], sqrt(accele_filtered[0] * accele_filtered[0] + accele_filtered[2] * accele_filtered[2])) * 180 / PI;
+
+  // Print angle values
+  Serial.print("row = "); Serial.print(row); Serial.print("\t");
+  Serial.print("pitch = "); Serial.print(pitch); Serial.print("\t");
   Serial.println();
-  // draw seperation line
-  Serial.println("--------------------------------------------------");
-
 }

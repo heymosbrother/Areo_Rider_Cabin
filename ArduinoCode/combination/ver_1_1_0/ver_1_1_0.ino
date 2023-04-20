@@ -1,10 +1,3 @@
-/*  This code is used to let the AMR Drive straight,even with interuption occurs
-
-    How to implement?
-
-    Use PID control the target rotational acceleration of the z axis of the IMU to 0
- */
-
 #include <Wire.h>  // I2C library
 #include <MPU6050.h>    // MPU6050 library
 #include <util/atomic.h>    // for atomic operation (PID)
