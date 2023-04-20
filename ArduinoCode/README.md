@@ -2,6 +2,13 @@
 
 ## Development Status
 ### Components
+
+- angle_detect
+
+    `In progress`
+
+    Need calibration to measure the real angle
+
 - encoder_test
 
     `Finished`
@@ -44,7 +51,9 @@
 
     Fix 2 motor velocity control bug and merge it with MPU6050 code to implement straight line driving
 
-    **4/19**: Add 5 second buffer after switch on; motor velocity control fixed; straight finished but need to PID parameters in person
+    **4/19**: Add 3 second buffer after switch on; motor velocity control fixed; straight finished but need to PID parameters in person
+    
+    **4/20**: PID Drive straight: Kp = 1, Ki = Kd = 0; 
 
 - ver_1_1_0
 
