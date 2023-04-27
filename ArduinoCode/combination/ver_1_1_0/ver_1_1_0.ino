@@ -16,7 +16,7 @@ enum Axis
 }typedef Axis;
 
 // MPU6050
-MPU6050 accelgyro;
+MPU6050 mpu;
 
 // variables for low pass filter
 int16_t prev_accele_original[] = {0,0,0,0,0,0}; // ax, ay, az, gx, gy, gz
@@ -76,7 +76,7 @@ void setup()
 
     // IMU part
     Wire.begin();
-    accelgyro.initialize();
+    mpu.initialize();
 
     // PID velocity control part
 
@@ -358,7 +358,7 @@ void readEncoder1()
 void updateAccel()
 {
     int16_t accele_original[]={0,0,0,0,0,0}; // ax, ay, az, gx, gy, gz
-    accelgyro.getMotion6(&accele_original[0], &accele_original[1], &accele_original[2], &accele_original[3], &accele_original[4], &accele_original[5]);
+    mpu.getMotion6(&accele_original[0], &accele_original[1], &accele_original[2], &accele_original[3], &accele_original[4], &accele_original[5]);
 
     // low pass filter the accelerometer data
     for (int  i = 0; i < 6; i++)

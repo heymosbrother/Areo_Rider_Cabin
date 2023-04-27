@@ -5,9 +5,17 @@
 
 - angle_detect
 
+    `Suspended`
+
+    Need calibration to measure the real 
+    
+    May have a better solution using *quaternion*
+
+- angle_quaternion
+
     `In progress`
 
-    Need calibration to measure the real angle
+    Use quaternain function in MPU6050 to get row, pitch and yaw without another new 9-axis IMU
 
 - encoder_test
 
