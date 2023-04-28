@@ -1,13 +1,9 @@
 #include <Wire.h>
 #include <MPU6050.h>
 
-MPU6050 accelgyro;
+MPU6050 mpu;
 
 // variables for low pass filter
-
-//  Alpha Z
-int16_t prev_alphaZ_original;
-int16_t prev_alphaZ_filtered;
 
 int16_t prev_accele_orginal[] = {0,0,0,0,0,0};
 int16_t prev_accele_filtered[] = {0,0,0,0,0,0};
@@ -15,12 +11,12 @@ int16_t prev_accele_filtered[] = {0,0,0,0,0,0};
 void setup() {
   Serial.begin(9600);
   Wire.begin();
-  accelgyro.initialize();
+  mpu.initialize();
 }
 
 void loop() {
   int16_t accele_original[] = {0,0,0,0,0,0}; // ax, ay, az, gx, gy, gz
-  accelgyro.getMotion6(&accele_original[0], &accele_original[1], &accele_original[2], &accele_original[3], &accele_original[4], &accele_original[5]);
+  mpu.getMotion6(&accele_original[0], &accele_original[1], &accele_original[2], &accele_original[3], &accele_original[4], &accele_original[5]);
   
   // low pass filter
   int16_t accele_filtered[] = {0,0,0,0,0,0};
