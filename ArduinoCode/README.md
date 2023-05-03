@@ -39,6 +39,12 @@
 
     Read acceleration of the 6 axes, and use digital low-pass filter to ease the noise
 
+- PID_motor_OOP
+
+    `In progress`
+
+    Use OOP to simplify the code and development, cannot fix static problem yet
+
 - PIDvelocity2motors
 
     `Finished`
