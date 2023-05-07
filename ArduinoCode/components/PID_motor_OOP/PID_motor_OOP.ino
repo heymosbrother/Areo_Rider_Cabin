@@ -47,11 +47,10 @@ class Motor_with_Encoder
         e_prev = 0;
         // PID parameters
         Kp = 5, Ki = 1, Kd = 0;
-
-        attachInterrupt(digitalPinToInterrupt(ENCA_pin), readEncoder_left, RISING);
     }
 
     // Methods
+    //  Notice this readEncoder function need to be delared additionally in the main code
     static void readEncoder()
     {
         int b = digitalRead(ENCB_pin) ? 1 : -1;

@@ -1,8 +1,23 @@
 #include <MPU6050.h>
 #include <Wire.h>
 
-MPU6050 mpu;
+class Quaternion {
+public:
+  float w, x, y, z;
 
+  Quaternion(float w_, float x_, float y_, float z_) : w(w_), x(x_), y(y_), z(z_) {}
+  Quaternion() : w(1.0), x(0.0), y(0.0), z(0.0) {}
+
+  Quaternion operator*(const Quaternion& q) const {
+    return Quaternion(
+      w*q.w - x*q.x - y*q.y - z*q.z,
+      w*q.x + x*q.w + y*q.z - z*q.y,
+      w*q.y - x*q.z + y*q.w + z*q.x,
+      w*q.z + x*q.y - y*q.x + z*q.w);
+  }
+};
+
+MPU6050 mpu;
 
 float angle[3]; // row, pitch, yaw
 
@@ -13,13 +28,12 @@ void setup()
     mpu.initialize();
 
     // Enable the DMP
-    mpu.dmpInitialize();
     mpu.setDMPEnabled(true);
 }
 
 void loop()
 {
-    
+    getAngle();
 }
 
 void getAngle()

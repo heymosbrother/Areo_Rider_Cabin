@@ -63,6 +63,12 @@
 
     Check if there's any I2C device connected to Arduino, if so return the port number
 
+- TCR5000
+
+    `Finished`
+
+    Make use of the IR tracing sensors
+
 ### Combination
 
 - ver_1_0_0
@@ -81,8 +87,16 @@
 
 - ver_1_1_0
 
-    `In progress`
+    `Suspended`
 
     Need to add foil-lift motor control, posture detection funcitonalities
 
     **4/20**: foil-lift finished, posture detection not started
+
+- ver_2_0_0
+
+    `In progress`
+
+    Add OOP file structure(complete)
+
+    Add tracing and posture detect(not yet)
