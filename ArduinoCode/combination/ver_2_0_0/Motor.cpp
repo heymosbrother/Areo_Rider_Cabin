@@ -30,7 +30,7 @@ Motor::Motor(int pwm, int inPlus, int inMinus, int encA, int encB)
     Kp = 5, Ki = 1, Kd = 0;
 }
 
-Motor::SetMotorPWM(int pwmVal, int dir)
+void Motor::SetMotorPWM(int pwmVal, int dir)
 {
     analogWrite(pwm, pwmVal);
     if (dir == 1)
@@ -50,7 +50,7 @@ Motor::SetMotorPWM(int pwmVal, int dir)
     }
 }
 
-Motor::SetVelocity(float target_velocity)
+void Motor::SetVelocity(float target_velocity)
 {
     // get current time
     float time_now = micros();

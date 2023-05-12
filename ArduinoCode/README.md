@@ -100,3 +100,5 @@
     Add OOP file structure(complete)
 
     Add tracing and posture detect(not yet)
+
+    5/12: angle detect not finished, need to calculate inverse function
