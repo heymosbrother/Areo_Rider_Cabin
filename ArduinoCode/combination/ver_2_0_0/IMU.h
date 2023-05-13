@@ -9,16 +9,19 @@
 class IMU : public Mpu6050 
 {
 private:
+    int_16_t accele_original[6];
+    int_16_t accele_filtered[6];
     int_16_t prev_accele_orginal[6];
     int_16_t prev_accele_filtered[6];
 
 public:
     // public variables
-    float row, pitch;
+    float roll, pitch;
 
     // methods
     IMU();
     float updateAngle();
+    bool shockDetect(int sensitivity);
 }
 
 #endif

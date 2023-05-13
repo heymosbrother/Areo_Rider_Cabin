@@ -93,12 +93,26 @@
 
     **4/20**: foil-lift finished, posture detection not started
 
-- ver_2_0_0
+- ver_2_0_0 (`In progress`)
 
-    `In progress`
+    - Tracer (`In progress`)
+        
+        Merge all four tracers into one class complete
+
+        Driving functions not started yet
+
+    - IMU (`In progress`)
+
+        Need to measure the shock accelerartion value by experiment later
+
+    - Motor (`Finished`)
+
+        Note: need to write interrupt funcitons in the main scope
 
     Add OOP file structure(complete)
 
-    Add tracing and posture detect(not yet)
+    Add tracing and posture detect(finished)
 
     5/12: angle detect not finished, need to calculate inverse function
+
+    5/13: IMU code added, start writing state machine and tracker behaviour

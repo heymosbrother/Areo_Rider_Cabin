@@ -3,12 +3,12 @@
 
 class Tracer {
 public:
-  Tracer(int analog_pin); // Constructor
-  int getAnalog();
-  bool onBlack();
+    Tracer(int analog_pin1, int analog_pin2, int analog_pin3, int analog_pin4); // Constructor
 
 private:
-    int analog_pin;
+    int aPins[4];
+    int getAnalog(int numTag);
+    bool onBlack(int numTag);
 };
 
 #endif // TRACER_H
