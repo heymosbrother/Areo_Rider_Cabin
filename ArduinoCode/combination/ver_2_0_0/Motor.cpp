@@ -7,8 +7,8 @@ Motor::Motor(int pwm, int inPlus, int inMinus, int encA, int encB)
     this->pwm = pwm;
     this->inPlus = inPlus;
     this->inMinus = inMinus;
-    this->encA = encA;
-    this->encB = encB;
+    this->ENC_A = encA;
+    this->ENC_B = encB;
     // initialize pins
     pinMode(pwm, OUTPUT);
     pinMode(inPlus, OUTPUT);
@@ -80,5 +80,12 @@ void Motor::SetVelocity(float target_velocity)
     // set motor
     SetMotorPWM(pwmVal, dir);
 
+    return;
+}
+
+void Motor::SetEncoderPosition(int dir)
+{
+    if (dir == 1) position++;
+    else position--;
     return;
 }

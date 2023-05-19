@@ -24,14 +24,16 @@ Tracer::Tracer(int analog_pin1, int analog_pin2, int analog_pin3, int analog_pin
     for (int i = 0; i < 4; i++) pinMode(aPins[i], INPUT);
 }
 
-int Tracer::getAnalog(int numTag - 1)
+int Tracer::getAnalog(int numTag)
 {
+    numTag--;
     if (numTag < 1 || numTag > 4) return; // avoid error
     return analogRead(aPins[numTag]);
 }
 
-bool Tracer::onBlack(int numTag - 1)
+bool Tracer::onBlack(int numTag)
 {
+    numTag--;
     if (numTag < 1 || numTag > 4) return;
     // when on black, the analog value will greater than 100
     return getAnalog(numTag) > 100;

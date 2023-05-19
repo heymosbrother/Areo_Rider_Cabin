@@ -17,8 +17,8 @@ public:
     int inPlus;
     int inMinus;
     // encoder pins
-    int encA;
-    int encB;
+    int ENC_A;
+    int ENC_B;
     // Variables
     int position, position_prev;
     
@@ -27,6 +27,7 @@ public:
     // Methods
     void SetMotorPWM(int pwmVal, int dir);
     void SetVelocity(float target_velocity);
+    void SetEncoderPosition(int dir);
 };
 
 #endif
