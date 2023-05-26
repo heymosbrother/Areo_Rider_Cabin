@@ -93,7 +93,7 @@
 
     **4/20**: foil-lift finished, posture detection not started
 
-- ver_2_0_0 (`In progress`)
+- ver_2_0_0 (`Suspended`)
 
     - Tracer (`In progress`)
         
@@ -101,7 +101,7 @@
 
         Driving functions not started yet
 
-    - IMU (`In progress`)
+    - IMU (`Suspended`)
 
         Need to measure the shock accelerartion value by experiment later
 
@@ -116,3 +116,19 @@
     5/12: angle detect not finished, need to calculate inverse function
 
     5/13: IMU code added, start writing state machine and tracker behaviour
+
+- ver_2_0_1 (`In progress`)
+
+    Use MPU6050_light library to get Yaw, Pitch, and Roll andgle. Need to revise the IMU class.
+
+- ver_2_1_0 (`In progress`)
+
+    Use the original MPU6050_light library instead of inheritance class, IMU.
+
+- TestField
+
+    Used to test seperated files
+
+    - Possible PID parameters:
+
+        
