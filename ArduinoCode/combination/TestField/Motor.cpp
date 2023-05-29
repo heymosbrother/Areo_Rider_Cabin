@@ -50,6 +50,14 @@ void Motor::SetMotorPWM(int pwmVal, int dir)
     }
 }
 
+void Motor::SetPIDparameters(float Kp, float Ki, float Kd)
+{
+    if (Kp > 0) this->Kp = Kp;
+    if (Ki >= 0) this->Ki = Ki;
+    if (Kd >= 0) this->Kd = Kd;
+    return;
+}
+
 void Motor::SetVelocity(float target_velocity)
 {
     // get current time
