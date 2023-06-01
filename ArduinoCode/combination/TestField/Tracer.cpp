@@ -38,3 +38,11 @@ bool Tracer::onBlack(int numTag)
     // when on black, the analog value will greater than 100
     return getAnalog(numTag) > 100;
 }
+
+bool Tracer::OnBlack(int numTag)
+{
+    numTag--;
+    if (numTag < 1 || numTag > 4) return;
+    // when on black, the analog value will greater than 100
+    return getAnalog(numTag) > 100;
+}

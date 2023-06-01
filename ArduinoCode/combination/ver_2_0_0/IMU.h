@@ -1,27 +1,28 @@
 #ifndef IMU_H
 #define IMU_H
 
-#include <Mpu6050.h>
+#include <MPU6050.h>
 #include <Wire.h>
-#include <Math.h>
+#include "Arduino.h"
+
 
 // inherit from Mpu6050 class
-class IMU : public Mpu6050 
+class IMU : public MPU6050 
 {
 private:
-    int_16_t accele_original[6];
-    int_16_t accele_filtered[6];
-    int_16_t prev_accele_orginal[6];
-    int_16_t prev_accele_filtered[6];
+    int16_t accele_original[6];
+    int16_t accele_filtered[6];
+    int16_t prev_accele_orginal[6];
+    int16_t prev_accele_filtered[6];
 
 public:
     // public variables
-    float roll, pitch;
+    float Roll, Pitch;
 
     // methods
     IMU();
-    float updateAngle();
-    bool shockDetect(int sensitivity);
-}
+    void UpdateAngle();
+    bool ShockDetect(int sensitivity);
+};
 
 #endif

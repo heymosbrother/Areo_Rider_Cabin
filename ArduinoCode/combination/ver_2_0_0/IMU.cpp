@@ -4,8 +4,8 @@
 IMU::IMU() : MPU6050()
 {
     // initialize variables
-    roll = 0;
-    pitch = 0;
+    Roll = 0;
+    Pitch = 0;
     for (int i = 0; i < 6; i++)
     {
         accele_original[i] = 0;
@@ -15,7 +15,7 @@ IMU::IMU() : MPU6050()
     }
 }
 
-void IMU::updateAngle()
+void IMU::UpdateAngle()
 {
     getMotion6(&accele_original[0], &accele_original[1], &accele_original[2], &accele_original[3], &accele_original[4], &accele_original[5]);
 
@@ -35,11 +35,11 @@ void IMU::updateAngle()
     float az = (accele_filtered[2]-38.5)/(16580);
 
     // calculate roll and pitch angle using ax, ay, az
-    roll = atan2(ay, az)*180/3.1416;
-    pitch = atan2(-ax, sqrt(ay*ay+az*az))*180/3.1416;
+    Roll = atan2(ay, az)*180/3.1416;
+    Pitch = atan2(-ax, sqrt(ay*ay+az*az))*180/3.1416;
 }
 
-bool IMU::shockDetect(float sensitivity)
+bool IMU::ShockDetect(int sensitivity)
 {
     // need to get shock acceleration value by experiment later
 

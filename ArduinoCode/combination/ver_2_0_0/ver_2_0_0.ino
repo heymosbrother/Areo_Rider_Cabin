@@ -9,8 +9,8 @@
 //  Tracers
 Tracer tracers(A0, A1, A2, A3);
 //  left and right motors
-Motor motor_left(9, 7, 6, 2, 13);
-Motor motor_right(10, 8, 5, 3, 12);
+Motor motor_left(10, 9, 8, 2, 11);
+Motor motor_right(5, 6, 7, 3, 4);
 //  the IMU
 IMU imu;
 
@@ -19,7 +19,9 @@ enum State
 {
     preparation,
     initial_straight,
-    climing
+    climing,
+    turning,
+    stop
 };
 State currentState = preparation;
 int prepareTime = 0;
@@ -30,8 +32,8 @@ void setup()
     Wire.begin();
     imu.initialize();
     // attach interrupts
-    attachInterrupt(digitalPinToInterrupt(motor_left.encA), readEncoderLeft, RISING);
-    attachInterrupt(digitalPinToInterrupt(motor_right.encA), readEncoderRight, RISING);
+    attachInterrupt(digitalPinToInterrupt(motor_left.ENC_A), readEncoderLeft, RISING);
+    attachInterrupt(digitalPinToInterrupt(motor_right.ENC_A), readEncoderRight, RISING);
 
     motor_left.SetVelocity(0);
     motor_right.SetVelocity(0);
@@ -39,9 +41,9 @@ void setup()
 
 void loop()
 {
-    imu.updateAngle();
-    // Emergency reset if the car encounters a shock
-    if () currentState = preparation;
+    imu.UpdateAngle();
+    // Emergency reset if the car encounters a large `shock
+    if (imu.ShockDetect(0.5)) currentState = preparation;
 
     // State machine part
     switch (currentState)
@@ -54,7 +56,7 @@ void loop()
         break;
     case initial_straight:
         // change to climing mode
-        if (imu.pitch >= 10) currentState = climing;
+        if (imu.Pitch >= 10) currentState = climing;
 
         break;
     case climing:
@@ -71,9 +73,9 @@ void loop()
 // Encoder interrupt functions 
 void readEncoderLeft()
 {
-    motor_left.position += digitalRead(motor_left.encB) ? 1 : -1;
+    motor_left.SetEncoderPosition(digitalRead(motor_left.ENC_B));
 }
 void readEncoderRight()
 {
-    motor_right.position += digitalRead(motor_right.encB) ? 1 : -1;
+    motor_right.SetEncoderPosition(digitalRead(motor_right.ENC_B));
 }

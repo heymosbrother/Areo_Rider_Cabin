@@ -27,7 +27,7 @@ Motor::Motor(int pwm, int inPlus, int inMinus, int encA, int encB)
     e_integral = 0;
     e_prev = 0;
     // PID parameters
-    Kp = 5, Ki = 1, Kd = 0;
+    Kp = 5, Ki = 0.1, Kd = 0.2;
 }
 
 void Motor::SetMotorPWM(int pwmVal, int dir)
@@ -48,6 +48,14 @@ void Motor::SetMotorPWM(int pwmVal, int dir)
         digitalWrite(inPlus, LOW);
         digitalWrite(inMinus, LOW);
     }
+}
+
+void Motor::SetPIDparameters(float Kp, float Ki, float Kd)
+{
+    if (Kp > 0) this->Kp = Kp;
+    if (Ki >= 0) this->Ki = Ki;
+    if (Kd >= 0) this->Kd = Kd;
+    return;
 }
 
 void Motor::SetVelocity(float target_velocity)
@@ -88,4 +96,9 @@ void Motor::SetEncoderPosition(int dir)
     if (dir == 1) position++;
     else position--;
     return;
+}
+
+float Motor::ShowVelocity()
+{
+    return v_filtered;
 }

@@ -26,8 +26,12 @@ public:
     Motor(int pwm, int inPlus, int inMinus, int encA, int encB);
     // Methods
     void SetMotorPWM(int pwmVal, int dir);
+    void SetPIDparameters(float Kp, float Ki, float Kd);
     void SetVelocity(float target_velocity);
     void SetEncoderPosition(int dir);
+
+    // Print methods
+    float ShowVelocity();
 };
 
 #endif
