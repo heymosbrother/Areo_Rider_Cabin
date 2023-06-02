@@ -13,141 +13,143 @@ Motor motor_left(10, 9, 8, 2, 11);
 Motor motor_right(5, 6, 7, 3, 4);
 //  the IMU
 MPU6050 imu(Wire);
-
-#pragma region[Global variables]
-
-// time
-unsigned long startTime;
-unsigned long duration;
+//  the Tracer
+const int TracerPin = 12;
 
 // PID parameters
 float Kp = 5, Kd = 0.1;
-float prev_error = 0;
-
-#pragma endregion
+float prev_error;
 
 // State machine
 enum State
 {
     preparation,
     initial_straight,
-    turnCloseToWind,
-    climing,
-    returnToCenterLine,
-    returnStraight,
-    turning,
-    stop,
-    testMotor
+    climb_a_little,
+    driveTowardsWind,
+    driveStriaght_alongWind,
+    stop
 };
-State currentState = preparation;
-int prepareTime = 0;
+State currentState;
 
+long long int timePin;
+int duration;
 void setup()
 {
     // attach interrupts
     attachInterrupt(digitalPinToInterrupt(motor_left.ENC_A), readEncoderLeft, RISING);
     attachInterrupt(digitalPinToInterrupt(motor_right.ENC_A), readEncoderRight, RISING);
         
-    Serial.begin(9600);
+    Serial.begin(115200);
     Wire.begin();
+    imu.begin();
     imu.calcOffsets();
 
     motor_left.SetVelocity(0);
     motor_right.SetVelocity(0);
+
+    // tracer
+    pinMode(TracerPin, INPUT);
+
+    prev_error = 0; // set initial error for PID go straight
+    timePin = millis();
+    duration = 5000; // 5 seconds
+
+    currentState = initial_straight; // set intial state
+    Serial.println(currentState);
+
+    delay(2000);
 }
 
 void loop()
 {
     imu.update();
-    // Emergency reset if the car encounters a large `shock
-    // if (imu.ShockDetect(0.5)) currentState = preparation;
+    Serial.println(currentState);
+    // print out the IMU values
+    /*
+    Serial.print("AngleX: ");
+    Serial.print(imu.getAngleX());
+    Serial.print(" AngleY: ");
+    Serial.print(imu.getAngleY());
+    Serial.print(" AngleZ: ");
+    Serial.println(imu.getAngleZ());
+    */
+    
+    // Restart the process if the vehicle is being lifted by hand
+    /*
+    if (imu.getAccZ() > 1.3) 
+    {
+        currentState = preparation;
+    }
+    */
 
-    // State machine part
+    // State machine 
     switch (currentState)
     {
-    case preparation:
-        // wait for three seconds, then change to next state
-        if (millis() >= 3000) currentState = testMotor; // test the motor, remember to change to initial_straight when done
-        GoStraight(motor_left, motor_right, 0, 0, imu.getAngleZ());
-        break;
     case initial_straight:
-        // change to climing mode
-        if (imu.getAngleX() <= -10) currentState = turnCloseToWind;
-        GoStraight(motor_left, motor_right, 50, 0, imu.getAngleZ());
-        break;
-    case turnCloseToWind:
-        // turn the car to get close to the wind
-        float targetAngle = 30;
-        // 
-        if (imu.getAngleZ() >= targetAngle) 
+        // go straight until get on the slope
+        if (imu.getAngleX() < -5)
         {
-            startTime = millis();
-            currentState = returnToCenterLine;
+            currentState = climb_a_little;
+            timePin = millis();
         }
-        turnAngle(motor_left, motor_right, 50, targetAngle, imu.getAngleZ());
+        GoStraight(40, 0);
         break;
-    case climing:
-        // climb for a certain time
-        if (millis() - startTime >= duration) currentState = returnToCenterLine;
-        GoStraight(motor_left, motor_right, 80, 0, imu.getAngleZ());
-        break;
-    case returnToCenterLine:
-        // turn the car to get back to the center line
-        targetAngle = -30;
-        turnAngle(motor_left, motor_right, 30, targetAngle, imu.getAngleZ());
-        if (tracers.OnBlack(3))
+    case climb_a_little:
+        // climb a little bit
+        if (millis() - timePin > 1500)
         {
-            currentState = returnStraight;
+            currentState = driveTowardsWind;
+            timePin = millis();
         }
+        GoStraight(60, 0);
         break;
-    case returnStraight:
-        turnAngle(motor_left, motor_right, 30, 0, imu.getAngleZ());
-        if (imu.getAngleZ() >= 0)
+    case driveTowardsWind:  // revise here, start from here...................................................
+        // drive towards the wind
+        if (millis() - timePin > 1000)
         {
-            startTime = millis();
-            currentState = turning;
+            currentState = stop;
+            timePin = millis();
         }
-        break;
-    case turning:
+        GoStraight(60, 30);
         break;
     case stop:
-        motor_left.SetVelocity(0);
-        motor_right.SetVelocity(0);
-        break;
-    case testMotor:
-        motor_left.SetVelocity(50);
-        motor_right.SetVelocity(50);
-        break;
-    default:
+        // stop the vehicle
+        motor_left.StopAllMotors();
+        motor_right.StopAllMotors();
         break;
     }
+    
 }
 
-// Go straight function
-void GoStraight(Motor leftMotor, Motor rightMotor ,int targetSpeed, int targetAngle, float zAngle) // in rpm
+// Go straight at a target speed and follow along the target angle, return the control signal magnitude "u"
+float GoStraight(int targetSpeed, int targetAngle) // in rpm
 {
     // Use P(I?)D to control the vehicle angle
-    float error = targetAngle - zAngle;
+    float error = targetAngle - imu.getAngleZ();
     // control signal u
     float u = Kp * error + Kd * (error - prev_error);
     // update prev_error
     prev_error = error;
     // set motor speed
-    leftMotor.SetVelocity(targetSpeed + u);
-    rightMotor.SetVelocity(targetSpeed - u);
+    motor_left.SetVelocity(targetSpeed - u);
+    motor_right.SetVelocity(-targetSpeed - u);
+    return u;
 }
 
-void turnAngle(Motor leftMotor, Motor rightMotor,int turnSpeed, int targetAngle, float zAngle)
+// Turn to a certain angle, return the control signal magnitude u
+float turnAngle(int targetAngle)
 {
     // Use P(I?)D to control the vehicle angle
-    float error = targetAngle - zAngle;
+    float error = targetAngle - imu.getAngleZ();
     // control signal u
     float u = Kp * error + Kd * (error - prev_error);
     // update prev_error
     prev_error = error;
     // set motor speed
-    leftMotor.SetVelocity(turnSpeed + u);
-    rightMotor.SetVelocity(turnSpeed -u);
+    motor_left.SetVelocity(-1 * u);
+    motor_right.SetVelocity(-1 * u);
+    return u;
 }
  
 // Encoder interrupt functions 
