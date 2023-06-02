@@ -1,6 +1,8 @@
 #include "Motor.h"
 #include "Arduino.h"
 
+// ticks to centimeters = 16.336
+
 Motor::Motor(int pwm, int inPlus, int inMinus, int encA, int encB)
 {
     // assign pins
@@ -88,6 +90,12 @@ void Motor::SetVelocity(float target_velocity)
     // set motor
     SetMotorPWM(pwmVal, dir);
 
+    return;
+}
+
+void Motor::StopAllMotors()
+{
+    SetMotorPWM(0, 0);
     return;
 }
 

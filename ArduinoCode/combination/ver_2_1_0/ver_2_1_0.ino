@@ -31,7 +31,7 @@ enum State
 {
     preparation,
     initial_straight,
-    turnCloseToWind,
+    turnTowardsWind,
     climing,
     returnToCenterLine,
     returnStraight,
@@ -71,10 +71,10 @@ void loop()
         break;
     case initial_straight:
         // change to climing mode
-        if (imu.getAngleX() <= -10) currentState = turnCloseToWind;
+        if (imu.getAngleX() <= -10) currentState = turnTowardsWind;
         GoStraight(motor_left, motor_right, 50, 0, imu.getAngleZ());
         break;
-    case turnCloseToWind:
+    case turnTowardsWind:
         // turn the car to get close to the wind
         float targetAngle = 30;
         // 

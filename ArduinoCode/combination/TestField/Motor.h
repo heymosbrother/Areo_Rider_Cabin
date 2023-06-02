@@ -20,7 +20,7 @@ public:
     int ENC_A;
     int ENC_B;
     // Variables
-    int position, position_prev;
+    long long int position, position_prev;
     
     // Constructor
     Motor(int pwm, int inPlus, int inMinus, int encA, int encB);
@@ -29,6 +29,7 @@ public:
     void SetPIDparameters(float Kp, float Ki, float Kd);
     void SetVelocity(float target_velocity);
     void SetEncoderPosition(int dir);
+    void StopAllMotors();
 
     // Print methods
     float ShowVelocity();
