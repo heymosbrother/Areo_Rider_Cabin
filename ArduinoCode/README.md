@@ -117,11 +117,11 @@
 
     5/13: IMU code added, start writing state machine and tracker behaviour
 
-- ver_2_0_1 (`In progress`)
+- ver_2_0_1 (`Finished`)
 
     Use MPU6050_light library to get Yaw, Pitch, and Roll andgle. Need to revise the IMU class.
 
-- ver_2_1_0 (`In progress`)
+- ver_2_1_0 (`Suspended`)
 
     Use the original MPU6050_light library instead of inheritance class, IMU.
 
@@ -131,4 +131,8 @@
 
     - Possible PID parameters:
 
-        
+- ver_2_2_0 (`In progress`)
+
+    Add servo control to the state machine.
+
+    Change both encoder B channel pins to spare pwm pin space for servo motors.

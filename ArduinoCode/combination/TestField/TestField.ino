@@ -1,16 +1,19 @@
 // Self made class
 #include "Motor.h"
+#include "Tracer.h"
 // #include "IMU.h"
 
 // Official libraries
 #include <Wire.h>
 #include <MPU6050_light.h>
+#include <Servo.h>
 
 // Objects
-
 Motor motor_left(10, 9, 8, 2, 11);
 Motor motor_right(5, 6, 7, 3, 4);
-
+Tracer tracer1(A0);
+Servo servo1;
+Servo servo2;
 MPU6050 imu(Wire);
 
 // PID parameters
@@ -34,6 +37,11 @@ void setup()
     Wire.begin();
     imu.begin();
     imu.calcOffsets();
+    servo1.attach(9);
+    servo2.attach(11);
+
+    servo1.write(97);
+    servo2.write(97);
 
     // attach interrupts  
     attachInterrupt(digitalPinToInterrupt(motor_left.ENC_A), readEncoderLeft, RISING);
@@ -47,7 +55,13 @@ void setup()
 
 void loop()
 {
-    
+    servo1.write(0);
+    servo2.write(0);
+    Serial.print("tracer1: analog value = ");
+    Serial.print(tracer1.getAnalog());
+    Serial.print("\t onBlack = ");
+    Serial.println(tracer1.onBlack());
+    /*
     imu.update();
     // show value
     Serial.println(currentState);
@@ -83,6 +97,7 @@ void loop()
     default:    
         break;
     }
+    */
 }
 
 // Encoder interrupt functions 
