@@ -35,18 +35,11 @@ float prevError_straight;
 enum State
 {
     preparation,
-    initial_straight,
-    climb_a_little,
-    turnTowardsWind,
-    driveTowardsWind,
-    turnStraight_alongWind,
-    driveStraight_alongWind,
-    stop,
-
-    // state for experimental trial
-    trialTurn,
-    trialClimbing,
-    trialStraight
+    initialStraight,
+    climbOnSlope,
+    adjustTurning,
+    adjustGoStraight,
+    stop
 };
 State currentState;
 
@@ -114,7 +107,7 @@ void loop()
     case preparation:
         if (currentAngle < targetAngle)
         {
-            currentState = initial_straight;
+            currentState = initialStraight;
         }
         else
         {
@@ -124,84 +117,33 @@ void loop()
             delay(delayTime);
         }
         break;
-    case initial_straight:
+    case initialStraight:
         // go straight until get on the slope
         if (imu.getAngleX() < -5)
         {
-            currentState = climb_a_little;
+            currentState = climbOnSlope;
             servoHead.write(0);
             servoTail.write(0);
             timePin = millis();
         }
         GoStraight(100, 0);
         break;
-    case climb_a_little:
-        // climb a little bit
-        if (millis() - timePin > 2000)
-        {
-            timePin = millis();
-            currentState = trialClimbing;
-        }
-        GoStraight(70, 0);
-        break;
-    case turnTowardsWind:
-        // leave the state when the vehicle angle is 30 degrees
-        if (imu.getAngleZ() >= 15)
-        {
-            currentState = driveTowardsWind;
-            timePin = millis();
-        }
-        motor_left.SetVelocity(0);
-        motor_right.SetVelocity(-30);
-        break;
-    case driveTowardsWind:
-        // drive towards the wind
-        if (millis() - timePin > 1000)
-        {
-            currentState = turnStraight_alongWind;
-            timePin = millis();
-        }
-        GoStraight(50, 15);
-        break;
-    case turnStraight_alongWind:
-        // turn straight along the wind slowly
-        if (imu.getAngleZ() <= 0)
-        {
-            currentState = driveStraight_alongWind;
-            timePin = millis();
-        }
-        motor_left.SetVelocity(30);
-        motor_right.SetVelocity(0);
-        break;
-    case driveStraight_alongWind:
-        // drive straight along the wind until the tracer detects black stripe
+    case climbOnSlope:
         if (tracer1.onBlack())
         {
-            servoHead.write(91);
-            servoTail.write(91);
-            currentState = stop;
-            timePin = millis();
+            currentState = adjustTurning;
         }
         GoStraight(70, 0);
         break;
-
-    // Case for experimental trial
-    case trialClimbing:
-        if (tracer1.onBlack())
-        {
-            currentState = trialTurn;
-        }
-        GoStraight(70, 0);
-        break;
-    case trialTurn:
+    case adjustTurning:
         if (imu.getAngleZ() >= 23)
         {
-            currentState = trialStraight;
+            currentState = adjustGoStraight;
         }
         motor_left.SetVelocity(-15);
         motor_right.SetVelocity(-30);
         break;
-    case trialStraight:
+    case adjustGoStraight:
         if (tracer1.onBlack())
         {
             currentState = stop;
